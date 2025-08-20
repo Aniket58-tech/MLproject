@@ -40,17 +40,61 @@ class ModelTrainer:
                 test_array[:, -1]
             )
             models = {
-                'Linear Regression': LinearRegression(),
-                'KNN': KNeighborsRegressor(),
-                'Decision Tree': DecisionTreeRegressor(),
-                'Random Forest': RandomForestRegressor(),
-                'Gradient Boosting': GradientBoostingRegressor(),
-                'AdaBoost': AdaBoostRegressor(),
-                'XGBoost': XGBRegressor(),
-                'CatBoost': CatBoostRegressor(verbose=False)
+                "Decision Tree": DecisionTreeRegressor(),
+                "Random Forest": RandomForestRegressor(),
+                "Gradient Boosting": GradientBoostingRegressor(),
+                "Linear Regression": LinearRegression(),
+                "KNN": KNeighborsRegressor(),
+                "AdaBoost": AdaBoostRegressor(),
+                "XGBoost": XGBRegressor(),
+                "CatBoost": CatBoostRegressor(verbose=False)
             }
 
-            model_report:dict=evaluate_models(X_train, y_train, X_test, y_test, models)
+            params={
+                "Decision Tree":{
+                    'criterion':["squared_error",'friedman_mse', 'absolute_error', 'poisson'],
+                    # 'splitter':['best', 'random'],
+                    # 'max_features':['auto', 'sqrt', 'log2'],
+                },
+                "Random Forest":{
+                    #'criterion':["squared_error",'friedman_mse', 'absolute_error', 'poisson'],
+                    # 'max_features':['auto', 'sqrt', 'log2'],
+                    'n_estimators':[8,16,32,64,128,256],
+                },
+                "Gradient Boosting":{
+                    # 'loss':['squared_error', 'absolute_error', 'huber', 'quantile'],
+                    'learning_rate':[0.01, 0.1, 0.2],
+                    'subsample':[0.6, 0.8, 1.0],
+                    #'criterion':['friedman_mse', 'squared_error'],
+                    # 'max_features':['auto', 'sqrt', 'log2'],
+                    'n_estimators':[8,16,32,64,128,256],
+                },
+                "Linear Regression":{},
+                "KNN":{
+                    'n_neighbors':[3,5,7,9],
+                    #'weights':['uniform', 'distance'],
+                    #'algorithm':['auto', 'ball_tree', 'kd_tree', 'brute']
+                },
+                "AdaBoost":{
+                    'learning_rate':[0.01, 0.1, 0.2],
+                    # 'loss':['linear', 'square', 'exponential'],
+                    'n_estimators':[8,16,32,64,128,256]
+                },
+                "XGBoost":{
+                    'learning_rate':[0.01, 0.1, 0.2],
+                    'n_estimators':[8,16,32,64,128,256],
+                    #'max_depth':[3, 5, 7],
+                    #'subsample':[0.6, 0.8, 1.0]
+                },
+                "CatBoost":{
+                    'learning_rate':[0.01, 0.1, 0.2],
+                    'depth':[3, 5, 7],
+                    'iterations':[8,16,32,64,128,256],
+                    #'l2_leaf_reg':[1, 3, 5]
+                }
+            }
+
+            model_report:dict=evaluate_models(X_train, y_train, X_test, y_test, models, param=params)
             
             best_model_score = max(sorted(model_report.values()))
 
